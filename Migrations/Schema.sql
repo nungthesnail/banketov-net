@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS feedback (
     id INT PRIMARY KEY AUTO_INCREMENT,
     application_id INT NOT NULL,
     content VARCHAR(512) NOT NULL,
+    viewed BOOLEAN NOT NULL DEFAULT FALSE,
 
     CONSTRAINT fk_feedback_application FOREIGN KEY (application_id) REFERENCES application(id)
 );

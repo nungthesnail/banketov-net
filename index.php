@@ -36,15 +36,19 @@ $applications = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         <h1>Личный кабинет</h1>
         <div class="text-center">
             <a href="submit.php" class="btn btn-primary">Оставить заявку</a>
-            <a href="admin.php" class="btn btn-secondary">Админская панель</a>
+            <?php if ($userInfo['isAdmin']): ?>
+                <a href="admin.php" class="btn btn-secondary">Админская панель</a>
+            <?php endif ?>
         </div>
+        <h2>Мои заявки: </h2>
+        <hr>
         <div>
             <?php if (empty($applications)): ?>
                 <p>Вы еще не создали ни одной заявки</p>
             <?php else: ?>
                 <?php foreach ($applications as $app): ?>
                     <div>
-                        <h3><?= $app['room_name'] ?></h3>
+                        <p class="h3"><u><?= $app['room_name'] ?></u></p>
                         <p><b>Желаемое время:<b> <?= $app['preferred_time'] ?></p>
                         <p><b>Статус: </b> <?= $app['status_name'] ?></p>
                         <?php if ($app['status_id'] >= 2): ?>
