@@ -70,7 +70,7 @@ $feedbacks = $conn
         JOIN application a ON f.application_id = a.id
         JOIN user u ON a.user_id = u.id
         JOIN room r On a.room_id = r.id
-        WHERE f.viewed
+        WHERE !f.viewed
         LIMIT 10;
     SQL)
     ->fetch_all(MYSQLI_ASSOC);

@@ -23,6 +23,25 @@ $stmt->bind_param('i', $userInfo['userId']);
 $stmt->execute();
 $applications = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
+// get feedbacks
+$stmt = $conn->prepare(<<<SQL
+        SELECT
+            f.id f_id,
+            f.content f_content,
+            a.id a_id,
+            r.name r_name,
+            f.viewed f_viewed
+        FROM feedback f
+        JOIN application a ON f.application_id = a.id
+        JOIN user u ON a.user_id = u.id
+        JOIN room r On a.room_id = r.id
+        WHERE u.id = ?
+        LIMIT 10;
+    SQL);
+$stmt->bind_param('i', $userInfo['userId']);
+$stmt->execute();
+$feedbacks = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -54,6 +73,23 @@ $applications = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
                         <?php if ($app['status_id'] >= 2): ?>
                             <a href="feedback.php/?applicationId=<?= $app['id'] ?>" class="btn btn-secondary">Оставить отзыв</a>
                         <?php endif ?>
+                        <hr>
+                    </div>
+                <?php endforeach ?>
+            <?php endif ?>
+        </div>
+        <h2>Мои отзывы: </h2>
+        <hr>
+        <div>
+            <?php if (empty($feedbacks)): ?>
+                <p>Вы еще не оставили ни одного отзыва</p>
+            <?php else: ?>
+                <?php foreach ($feedbacks as $fb): ?>
+                    <div>
+                        <p><b>ID заявки: <b> <?= $fb['a_id'] ?></p>
+                        <p><b>Помещение: <b> <?= $fb['r_name'] ?></p>
+                        <p><b>Текст: <b> <?= $fb['f_content'] ?></p>
+                        <p><b>Просмотрено: <b> <?= $fb['f_viewed'] ? 'Да' : 'Нет' ?></p>
                         <hr>
                     </div>
                 <?php endforeach ?>
