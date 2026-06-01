@@ -40,7 +40,7 @@ class App {
      * @return null|array<string, mixed>
      */
     public function getUserInfo(): array|null {
-        if (empty($_SESSION['userId']) || empty($_SESSION['isAdmin']))
+        if (!isset($_SESSION['userId']) || !isset($_SESSION['isAdmin']))
             return null;
 
         return [
