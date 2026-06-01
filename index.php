@@ -10,6 +10,19 @@ if (!$userInfo) {
     exit();
 }
 
+// get applications
+$conn = $app->getConnection();
+$stmt = $conn->prepare(<<<SQL
+    SELECT a.id id, r.name room_name, s.id status_id, s.name status_name, a.preferred_time preferred_time FROM application a
+    JOIN room r ON a.room_id = r.id
+    JOIN status s ON s.id = a.status
+    WHERE a.user_id = ?
+    ORDER BY a.preferred_time
+    SQL);
+$stmt->bind_param('i', $userInfo['userId']);
+$stmt->execute();
+$applications = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -20,7 +33,28 @@ if (!$userInfo) {
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     </head>
     <body>
-        <h1>Авторизован</h1>
+        <h1>Личный кабинет</h1>
+        <div class="text-center">
+            <a href="submit.php" class="btn btn-primary">Оставить заявку</a>
+            <a href="admin.php" class="btn btn-secondary">Админская панель</a>
+        </div>
+        <div>
+            <?php if (empty($applications)): ?>
+                <p>Вы еще не создали ни одной заявки</p>
+            <?php else: ?>
+                <?php foreach ($applications as $app): ?>
+                    <div>
+                        <h3><?= $app['room_name'] ?></h3>
+                        <p><b>Желаемое время:<b> <?= $app['preferred_time'] ?></p>
+                        <p><b>Статус: </b> <?= $app['status_name'] ?></p>
+                        <?php if ($app['status_id'] >= 2): ?>
+                            <a href="feedback.php/?applicationId=<?= $app['id'] ?>" class="btn btn-secondary">Оставить отзыв</a>
+                        <?php endif ?>
+                        <hr>
+                    </div>
+                <?php endforeach ?>
+            <?php endif ?>
+        </div>
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     </body>
 </html>

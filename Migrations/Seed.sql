@@ -11,4 +11,10 @@ INSERT INTO status (id, name) VALUES
     (2, 'Банкет назначен'),
     (3, 'Банкет завершен');
 
+INSERT INTO payment_method (id, name) VALUES
+    (1, 'Картой'),
+    (2, 'Наличными'),
+    (3, 'QR-код СБП'),
+    (4, 'Расчетный счет для ЮЛ');
+
 COMMIT;

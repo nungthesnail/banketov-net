@@ -23,7 +23,14 @@ CREATE TABLE IF NOT EXISTS room (
     image_src VARCHAR(128) NOT NULL
 );
 
+CREATE INDEX idx_room_name ON room (name);
+
 CREATE TABLE IF NOT EXISTS status (
+    id INT PRIMARY KEY,
+    name VARCHAR(64) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS payment_method (
     id INT PRIMARY KEY,
     name VARCHAR(64) NOT NULL
 );
@@ -32,12 +39,14 @@ CREATE TABLE IF NOT EXISTS application (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
     room_id INT NOT NULL,
-    preferred_time TIMESTAMP NOT NULL,
+    preferred_time VARCHAR(128) NOT NULL,
     status INT NOT NULL,
+    payment_method INT NOT NULL,
 
     CONSTRAINT fk_application_user FOREIGN KEY (user_id) REFERENCES user(id),
     CONSTRAINT fk_application_room FOREIGN KEY (room_id) REFERENCES room(id),
-    CONSTRAINT fk_application_status FOREIGN KEY (status) REFERENCES status(id)
+    CONSTRAINT fk_application_status FOREIGN KEY (status) REFERENCES status(id),
+    CONSTRAINT fk_application_payment_method FOREIGN KEY (payment_method) REFERENCES payment_method(id)
 );
 
 CREATE TABLE IF NOT EXISTS feedback (
